@@ -9,29 +9,24 @@
   </div>
 
   <div class="p-4">
-    <h4 class="font-italic">Archives</h4>
+    <h4 class="font-italic">Categories</h4>
     <ol class="list-unstyled mb-0">
-      <li><a href="#">March 2014</a></li>
-      <li><a href="#">February 2014</a></li>
-      <li><a href="#">January 2014</a></li>
-      <li><a href="#">December 2013</a></li>
-      <li><a href="#">November 2013</a></li>
-      <li><a href="#">October 2013</a></li>
-      <li><a href="#">September 2013</a></li>
-      <li><a href="#">August 2013</a></li>
-      <li><a href="#">July 2013</a></li>
-      <li><a hrf="#">June 2013</a></li>
-      <li><a href="#">May 2013</a></li>
-      <li><a href="#">April 2013</a></li>
+      {% for category in categories %}
+        <li><a href="{{ url_for('category_page', category_id=category.id) }}">{{ category.title }}</a></li>
+      {% endfor %}
     </ol>
   </div>
 
   <div class="p-4">
-    <h4 class="font-italic">Elsewhere</h4>
+    <h4 class="font-italic">Authors</h4>
     <ol class="list-unstyled">
-      <li><a href="#">GitHub</a></li>
-      <li><a href="#">Twitter</a></li>
-      <li><a href="#">Facebook</a></li>
+      {% for author in authors %}
+        <li>
+          <a href="{{ url_for('author_page', author_id=author.id) }}">
+            {{ author.first_name }} {{ author.last_name }}
+          </a>
+        </li>
+      {% endfor %}
     </ol>
   </div>
 </aside>

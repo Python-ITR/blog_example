@@ -6,7 +6,7 @@ from datetime import datetime
 
 @dataclass
 class PostDto:
-    _id: int
+    id: int
     title: str
     body: str
     created_at: datetime
@@ -43,7 +43,8 @@ class PostsService:
             SELECT
                 {POST_DTO_SELECT_SQL}
             FROM
-                {POST_DTO_FROM_SQL};
+                {POST_DTO_FROM_SQL}
+            ORDER BY created_at DESC;
         """
         )
         data = c.fetchall()  # [(), ()]
@@ -51,7 +52,45 @@ class PostsService:
         return data
 
     @staticmethod
-    def get_post_by_id(post_id: int) -> List[PostDto]:
+    def get_all_posts_by_category(category_id) -> List[PostDto]:
+        c = connection.cursor()
+        c.execute(
+            f"""
+            SELECT
+                {POST_DTO_SELECT_SQL}
+            FROM
+                {POST_DTO_FROM_SQL}
+            WHERE
+                posts.category_id=%s
+            ORDER BY created_at DESC;
+        """,
+        (category_id, )
+        )
+        data = c.fetchall()
+        data = list(map(lambda i: PostDto(*i), data))
+        return data
+
+    @staticmethod
+    def get_all_posts_by_author(author_id) -> List[PostDto]:
+        c = connection.cursor()
+        c.execute(
+            f"""
+            SELECT
+                {POST_DTO_SELECT_SQL}
+            FROM
+                {POST_DTO_FROM_SQL}
+            WHERE
+                posts.author_id=%s
+            ORDER BY created_at DESC;
+        """,
+        (author_id, )
+        )
+        data = c.fetchall()
+        data = list(map(lambda i: PostDto(*i), data))
+        return data
+
+    @staticmethod
+    def get_post_by_id(post_id: int) -> PostDto:
         c = connection.cursor()
         c.execute(
             f"""
