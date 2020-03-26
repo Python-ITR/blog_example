@@ -64,7 +64,7 @@ class PostsService:
                 posts.category_id=%s
             ORDER BY created_at DESC;
         """,
-        (category_id, )
+            (category_id,),
         )
         data = c.fetchall()
         data = list(map(lambda i: PostDto(*i), data))
@@ -83,7 +83,7 @@ class PostsService:
                 posts.author_id=%s
             ORDER BY created_at DESC;
         """,
-        (author_id, )
+            (author_id,),
         )
         data = c.fetchall()
         data = list(map(lambda i: PostDto(*i), data))
@@ -105,3 +105,31 @@ class PostsService:
         data = c.fetchone()
         data = PostDto(*data)
         return data
+
+    @staticmethod
+    def create_new_post(title, category_id, author_id, body="") -> PostDto:
+        """
+        Создать новый пост с полученными данными и вернуть его
+        """
+        c = connection.cursor()
+        now = datetime.now()
+        c.execute(
+            """INSERT INTO posts (title, category_id, author_id, body, created_at, updated_at)
+            VALUES (%s, %s, %s, %s, %s, %s) RETURNING id;""",
+            (title, category_id, author_id, body, now, now),
+        )
+        post_id, = c.fetchone()
+        connection.commit()
+        post = PostsService.get_post_by_id(post_id)
+        return post
+
+    @staticmethod
+    def delete_pots_by_id(post_id: int) -> PostDto:
+        """
+        Удалить пость по его ID и вернуть его после удаления.
+        """
+        c = connection.cursor()
+        post = PostsService.get_post_by_id(post_id)
+        c.execute("DELETE FROM posts WHERE id=%s;", (post.id,))
+        connection.commit()
+        return post
