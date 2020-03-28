@@ -15,6 +15,7 @@ class PostDto:
     author_first_name: str
     author_last_name: str
     category_title: str
+    category_id: int
 
 
 POST_DTO_SELECT_SQL = """
@@ -26,7 +27,8 @@ POST_DTO_SELECT_SQL = """
                 author_id,
                 authors.first_name AS author_first_name,
                 authors.last_name AS author_last_name,
-                categories.title AS category_title"""
+                categories.title AS category_title,
+                categories.id AS category_id"""
 
 POST_DTO_FROM_SQL = """
                 posts
@@ -118,7 +120,22 @@ class PostsService:
             VALUES (%s, %s, %s, %s, %s, %s) RETURNING id;""",
             (title, category_id, author_id, body, now, now),
         )
-        post_id, = c.fetchone()
+        (post_id,) = c.fetchone()
+        connection.commit()
+        post = PostsService.get_post_by_id(post_id)
+        return post
+
+    @staticmethod
+    def edit_post_by_id(post_id, title, category_id, author_id, body="") -> PostDto:
+        """
+        Редактирует существующий пост по id и возвращает новую версию
+        """
+        c = connection.cursor()
+        now = datetime.now()
+        c.execute(
+            """UPDATE posts SET title=%s, category_id=%s, author_id=%s, body=%s, updated_at=%s WHERE id=%s;""",
+            (title, category_id, author_id, body, now, post_id)
+        )
         connection.commit()
         post = PostsService.get_post_by_id(post_id)
         return post

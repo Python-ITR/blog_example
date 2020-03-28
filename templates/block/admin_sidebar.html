@@ -1,6 +1,11 @@
 <ul class="nav flex-column">
   <li class="nav-item">
-    <a class="nav-link" href="{{ url_for('admin_posts') }}">Posts</a>
+    <a
+      class="nav-link {% if request.path == url_for('admin_posts')%} disabled {% endif %}"
+      href="{{ url_for('admin_posts') }}"
+    >
+      Posts
+    </a>
   </li>
   <li class="nav-item">
     <a class="nav-link" href="#">Authors</a>
