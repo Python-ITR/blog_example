@@ -1,4 +1,12 @@
-from flask import abort, current_app, redirect, render_template, request, url_for
+from flask import (
+    abort,
+    current_app,
+    redirect,
+    render_template,
+    request,
+    url_for,
+    redirect,
+)
 
 from services import (
     AuthorsService,
@@ -7,6 +15,7 @@ from services import (
     SessionsService,
     UsersService,
 )
+from utils import auth_only
 
 
 def index_page():
@@ -42,17 +51,20 @@ def category_page(category_id):
     )
 
 
+@auth_only
 def author_page(author_id):
     author = AuthorsService.get_author_by_id(author_id)
     author_posts = PostsService.get_all_posts_by_author(author_id)
     return render_template("author.html", author=author, author_posts=author_posts)
 
 
+@auth_only
 def admin_posts():
     posts = PostsService.get_all_posts()
     return render_template("admin_posts.html", posts=posts)
 
 
+@auth_only
 def admin_post_new():
     categories = CategoriesService.get_all_categories()
     authors = AuthorsService.get_all_authors()
@@ -72,6 +84,7 @@ def admin_post_new():
         return redirect(url_for("admin_posts"))
 
 
+@auth_only
 def admin_post_edit(post_id: int):
     categories = CategoriesService.get_all_categories()
     authors = AuthorsService.get_all_authors()
@@ -93,6 +106,7 @@ def admin_post_edit(post_id: int):
         return redirect(url_for("admin_posts"))
 
 
+@auth_only
 def admin_posts_delete(post_id: int):
     PostsService.delete_pots_by_id(post_id)
     return redirect(url_for("admin_posts"))
@@ -107,9 +121,15 @@ def login():
         user = UsersService.get_user_by_username(username)
         if user.password != password:
             abort(400)
-        st = request.cookies.get(current_app.config.get("SESSION_COOKIE"))
-        SessionsService.attach_user(st, user.id)
+        SessionsService.attach_user(request.session_token, user.id)
         return redirect(url_for("index_page"))
+
+
+def logout():
+    res = redirect("/")
+    SessionsService.delete_session_by_token(request.session_token)
+    res.set_cookie("session_token", "")
+    return res
 
 
 def register_views(app):
@@ -119,6 +139,7 @@ def register_views(app):
     app.route("/author/<int:author_id>")(author_page)
     # AUTH
     app.route("/login", methods=["GET", "POST"])(login)
+    app.route("/logout")(logout)
     # ADMIN
     app.route("/admin/")(admin_posts)  # Posts list
     app.route("/admin/post/<int:post_id>", methods=["DELETE"])(

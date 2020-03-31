@@ -24,3 +24,13 @@ class UsersService:
         )
         user_data = c.fetchone()
         return UserDto(*user_data)
+
+    @staticmethod
+    def get_user_by_id(user_id: int) -> UserDto:
+        c = connection.cursor()
+        c.execute(
+            "SELECT id, username, password, created_at, updated_at from users WHERE id=%s;",
+            (user_id,),
+        )
+        user_data = c.fetchone()
+        return UserDto(*user_data)
