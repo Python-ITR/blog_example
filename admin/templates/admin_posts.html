@@ -24,13 +24,13 @@
             <td>{{ post.author_first_name }} {{ post.author_last_name }}</td>
             <td>
               <a
-               href="{{ url_for('admin_post_edit', post_id=post.id) }}"
+               href="{{ url_for('admin.admin_post_edit', post_id=post.id) }}"
                 class="btn btn-primary"
               >
                 Edit
               </a>
               <a
-                data-delete-url="{{ url_for('admin_posts_delete', post_id=post.id) }}"
+                data-delete-url="{{ url_for('admin.admin_posts_delete', post_id=post.id) }}"
                 class="btn btn-danger"
               >
                 <svg
@@ -54,7 +54,7 @@
         </tbody>
       </table>
       <a
-        href="{{ url_for('admin_post_new') }}"
+        href="{{ url_for('admin.admin_post_new') }}"
         class="btn btn-primary"
         >Create new post</a
       >

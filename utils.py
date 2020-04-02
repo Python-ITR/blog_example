@@ -1,7 +1,10 @@
-from flask import request, abort
-from functools import wraps
+import hashlib
 import random
 import string
+
+from functools import wraps
+
+from flask import abort, request
 
 
 def gen_random_str(length: int = 12) -> str:
@@ -16,3 +19,9 @@ def auth_only(view_function):
         return view_function(*args, **kwargs)
 
     return wrapper
+
+
+def get_password_hash(password: str):
+    hasher = hashlib.new("md5")
+    hasher.update(password.encode())
+    return hasher.hexdigest()

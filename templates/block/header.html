@@ -6,22 +6,23 @@
     </div>
     <div class="col-3 d-flex justify-content-end align-items-center">
       {% if request.user %}
-        <a class="mr-2">{{request.user.username}}</a>
-        <a
-          class="btn btn-sm btn-outline-secondary"
-          href="{{ url_for('admin_posts') }}"
-          >Admin</a
-        >
-        <a
-          class="btn btn-sm btn-danger"
-          href="{{ url_for('logout') }}"
-          >Logout</a
-        >
+      <a class="mr-2">{{request.user.username}}</a>
+      <a
+        class="btn btn-sm btn-outline-secondary mr-2"
+        href="{{ url_for('admin.admin_posts') }}"
+        >Admin</a
+      >
+      <a class="btn btn-sm btn-danger" href="{{ url_for('auth.logout') }}">Logout</a>
       {% else %}
       <a
         class="btn btn-sm btn-outline-secondary mr-2"
-        href="{{ url_for('login') }}"
+        href="{{ url_for('auth.login') }}"
         >Login</a
+      >
+      <a
+        class="btn btn-sm btn-outline-secondary"
+        href="{{ url_for('auth.register') }}"
+        >Sign in</a
       >
       {% endif %}
     </div>

@@ -49,7 +49,7 @@ class SessionsService:
         connection.commit()
 
     @staticmethod
-    def delete_session_by_token(token: str) -> SessionDto:
+    def delete_session_by_token(token: str) -> Optional[SessionDto]:
         c = connection.cursor()
         session = SessionsService.get_session_by_token(token)
         c.execute("DELETE FROM sessions WHERE token=%s;", (token,))
