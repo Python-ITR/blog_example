@@ -6,10 +6,19 @@ from services import SessionsService, UsersService
 def register_middlewaries(app: Flask):
     @app.after_request
     def attach_session(res: Response):
+        """
+        Прикрекпляет session_token(Кука) к сессии если он отсутствует
+        Если аргемент force равен 'True' - мы принудительно создаем новую запись сессии в БД
+        """
         st = request.cookies.get(app.config.get("SESSION_COOKIE", ""))
         if not st:
             session = SessionsService.create_new_session()
             res.set_cookie(app.config.get("SESSION_COOKIE"), session.token)
+        else:
+            session = SessionsService.get_session_by_token(st)
+            if not session:
+                session = SessionsService.create_new_session()
+                res.set_cookie(app.config.get("SESSION_COOKIE"), session.token)
         return res
 
     @app.before_request

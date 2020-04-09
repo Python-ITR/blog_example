@@ -25,6 +25,7 @@ class UsersService:
             (username, password, now, now),
         )
         (user_id,) = c.fetchone()
+        connection.commit()
         return UsersService.get_user_by_id(user_id)
 
     @staticmethod
@@ -46,3 +47,14 @@ class UsersService:
         )
         user_data = c.fetchone()
         return UserDto(*user_data)
+
+    @staticmethod
+    def change_user_password(username: str, password: str) -> UserDto:
+        c = connection.cursor()
+        password = get_password_hash(password)
+        c.execute(
+            "UPDATE users SET password=%s WHERE username=%s;",
+            (password, username)
+        )
+        connection.commit()
+        return UsersService.get_user_by_username(username)

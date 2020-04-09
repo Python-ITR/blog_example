@@ -4,6 +4,13 @@
 
 {% block body %}
     <main class="container pt-4 pb-4">
+      {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+        <div class="alert alert-danger" role="alert">
+          {{message}}
+        </div>
+        {% endfor %}
+      {% endwith %}
       <form method="POST">
         <div class="form-group">
             <label for="username">Username</label>

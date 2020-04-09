@@ -1,14 +1,17 @@
-from flask import Flask, request, Response
+import os
+import dotenv
+from flask import Flask
 from views import register_views
-from services import SessionsService
 from middlewaries import register_middlewaries
 from admin import admin_blueprint
 from auth import auth_blueprint
 
+dotenv.load_dotenv()
 
 app = Flask(__name__)
 
-app.config["DEBUG"] = True
+app.config["DEBUG"] = os.environ.get("DEBUG", None) in ["1", "true", "True"]
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "")
 app.config["SESSION_COOKIE"] = "session_token"
 
 register_views(app)

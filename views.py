@@ -1,9 +1,19 @@
+import math
 from flask import abort, redirect, render_template, request, url_for
 
 from services import (
-    AuthorsService, CategoriesService, PostsService, SessionsService,
-    UsersService)
+    AuthorsService,
+    CategoriesService,
+    PostsService,
+    SessionsService,
+    UsersService,
+)
+from services.PostsService import PostsServiceException, PostsServiceNotFoundException
 from utils import auth_only
+
+
+def error_404(error_text):
+    return render_template("404.html", error_text=error_text)
 
 
 def index_page():
@@ -27,8 +37,24 @@ def index_page():
 
 
 def post_page(post_id):
-    post = PostsService.get_post_by_id(post_id)
-    return render_template("article.html", post=post)
+    try:
+        post = PostsService.get_post_by_id(post_id)
+        return render_template("article.html", post=post)
+    except PostsServiceNotFoundException as error:
+        abort(404)
+
+
+def catalog_page():
+    try:
+        page = int(request.args.get("page", 1))
+        posts = PostsService.get_all_posts(limit=2, page=page)
+        count = PostsService.get_count()
+        page_count = math.ceil(count / 2)
+        return render_template(
+            "catalog.html", posts=posts, page_count=page_count, int=int
+        )
+    except PostsServiceNotFoundException as error:
+        abort(404)
 
 
 def category_page(category_id):
@@ -48,8 +74,8 @@ def author_page(author_id):
 
 def register_views(app):
     app.route("/")(index_page)
+    app.route("/catalog")(catalog_page)
     app.route("/post/<int:post_id>")(post_page)
     app.route("/category/<int:category_id>")(category_page)
     app.route("/author/<int:author_id>")(author_page)
-   
-  
+    app.errorhandler(404)(error_404)

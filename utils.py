@@ -1,4 +1,5 @@
-import hashlib
+import os
+import hmac
 import random
 import string
 
@@ -22,6 +23,5 @@ def auth_only(view_function):
 
 
 def get_password_hash(password: str):
-    hasher = hashlib.new("md5")
-    hasher.update(password.encode())
-    return hasher.hexdigest()
+    salt: str = os.environ.get("SECRET_KEY", "")
+    return hmac.new(salt.encode(), password.encode(), "md5").hexdigest()
