@@ -6,5 +6,5 @@
     {{ post.created_at.strftime("%d. %B %Y") }} by
     <a href="#">{{ post.author_first_name }} {{ post.author_last_name }}</a>
   </p>
-  {{post.body}}
+  {{post.body|markdown}}
 </div>

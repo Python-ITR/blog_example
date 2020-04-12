@@ -3,3 +3,4 @@ from .CategoriesService import CategoriesService
 from .AuthorsService import AuthorsService
 from .SessionsService import SessionsService
 from .UsersService import UsersService
+from .FilesService import FilesService

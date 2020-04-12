@@ -17,6 +17,7 @@ class PostDto:
     id: int
     title: str
     body: str
+    preview: str
     created_at: datetime
     updated_at: datetime
     author_id: int
@@ -30,6 +31,7 @@ POST_DTO_SELECT_SQL = """
                 posts.id,
                 posts.title,
                 body,
+                preview,
                 created_at,
                 updated_at,
                 author_id,
@@ -152,16 +154,16 @@ class PostsService:
 
 
     @staticmethod
-    def create_new_post(title, category_id, author_id, body="") -> PostDto:
+    def create_new_post(title, category_id, author_id, body="", preview=None) -> PostDto:
         """
         Создать новый пост с полученными данными и вернуть его
         """
         c = connection.cursor()
         now = datetime.now()
         c.execute(
-            """INSERT INTO posts (title, category_id, author_id, body, created_at, updated_at)
-            VALUES (%s, %s, %s, %s, %s, %s) RETURNING id;""",
-            (title, category_id, author_id, body, now, now),
+            """INSERT INTO posts (title, category_id, author_id, body, preview, created_at, updated_at)
+            VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id;""",
+            (title, category_id, author_id, body, preview, now, now),
         )
         (post_id,) = c.fetchone()
         connection.commit()
@@ -169,15 +171,15 @@ class PostsService:
         return post
 
     @staticmethod
-    def edit_post_by_id(post_id, title, category_id, author_id, body="") -> PostDto:
+    def edit_post_by_id(post_id, title, category_id, author_id, body="", preview=None) -> PostDto:
         """
         Редактирует существующий пост по id и возвращает новую версию
         """
         c = connection.cursor()
         now = datetime.now()
         c.execute(
-            """UPDATE posts SET title=%s, category_id=%s, author_id=%s, body=%s, updated_at=%s WHERE id=%s;""",
-            (title, category_id, author_id, body, now, post_id),
+            """UPDATE posts SET title=%s, category_id=%s, author_id=%s, body=%s, preview=%s, updated_at=%s WHERE id=%s;""",
+            (title, category_id, author_id, body, preview, now, post_id),
         )
         connection.commit()
         post = PostsService.get_post_by_id(post_id)

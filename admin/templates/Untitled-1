@@ -1,0 +1,32 @@
+GET /save_file HTTP/1.1
+X-Filename: somefile.png
+Content-Type: image/png
+
+dsfj02u394obu0wqpu4029uvu0wu0ru901u2093ug0s0ruw09
+
+
+
+
+
+
+GET /save_file HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+key=value&key=value&key=value&key=value
+
+
+
+
+
+GET /save_file HTTP/1.1
+Content-Type: multipart/form-data; boundary=---------------------------195466489041436905971950185588
+
+---------------------------195466489041436905971950185588
+Content-Disposition: form-data; name="title"
+
+some_text
+---------------------------195466489041436905971950185588
+Content-Disposition: form-data; name="preview"; filename="2020-03-23 21.47.22.jpg"
+Content-Type: image/jpeg
+
+2u4joiby9u2134u8bydsuf021u3903y50yd8vyg8dsyf81203uh580y08gdy08dsy0f4
